@@ -25,10 +25,10 @@ class QuotesController extends GetxController {
   final AuthController auth = Get.find<AuthController>();
   // RxBool isFavorite = false.obs;
 
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  // }
+  @override
+  void onInit() {
+    super.onInit();
+  }
 
   var fontFam = ''.obs;
   var backImage = ''.obs;
@@ -49,28 +49,32 @@ class QuotesController extends GetxController {
   ].obs;
 
   fetchQuotes(String catId) {
+    List<Quotes> quotes = [];
     print(catId);
 
     try {
       quotesList.bindStream(firebaseFirestore
-          .collection('quote')
+          .collection('quotes')
           .where(
             'category',
             isEqualTo: "General",
           )
           .snapshots()
           .map((QuerySnapshot query) {
-        List<Quotes> quotes = [];
         for (var quote in query.docs) {
           final quoteModel =
               Quotes.fromDocumentSnapshot(documentSnapshot: quote);
           quotes.add(quoteModel);
         }
+
+        print("getting data from firestore");
+
         return quotes;
       }));
     } on Exception catch (e) {
       print(e);
     }
+    quotesList.value.addAll(quotes);
   }
 
   likeQuote(String id) async {

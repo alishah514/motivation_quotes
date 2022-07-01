@@ -6,10 +6,12 @@
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.SET_WALLPAPER"/>
+
     <application
-    android:label="motivation_quotes" 
+    android:label="Dark Psychology and Manipulation Secrets" 
     android:name="${applicationName}" 
-    android:icon="@mipmap/ic_launcher" 
+    android:icon="@mipmap/logo" 
     android:requestLegacyExternalStorage="true"
      >
         <activity android:name=".MainActivity" android:exported="true" android:launchMode="singleTop" android:theme="@style/LaunchTheme" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" android:hardwareAccelerated="true" android:windowSoftInputMode="adjustResize">

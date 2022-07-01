@@ -54,13 +54,15 @@ dependencies:
   intl: ^0.17.0
   path_provider: ^2.0.11
   permission_handler: ^10.0.0
-  random_color: ^1.0.5
+  random_color: ^1.0.6-nullsafety
+  screenshot: ^1.2.3
   share: ^2.0.4
   share_plus: ^4.0.5
   shared_preferences: ^2.0.15
   timezone: ^0.8.0
   transparent_image: ^2.0.0
   url_launcher: ^6.1.4
+  wallpaper_manager_flutter: ^0.0.2
 
 dev_dependencies:
   change_app_package_name: ^1.1.0

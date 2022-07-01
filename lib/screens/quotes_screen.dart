@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:math';
-
+import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +20,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../widgets/button.dart';
 import '../widgets/quotes_widget.dart';
 import 'themes_screen.dart';
+import 'package:wallpaper_manager_flutter/wallpaper_manager_flutter.dart';
+import 'package:screenshot/screenshot.dart';
 
 class QuotesScreen extends StatefulWidget {
   final String? catId;
@@ -38,91 +40,7 @@ class _QuotesScreenState extends State<QuotesScreen> {
 
   var $text;
 
-  bool loading = false;
-  double progrss = 0.0;
-  final Dio dio = Dio();
-
-  Future<bool> saveFile(String text, String fileName) async {
-    Directory directory;
-    try {
-      if (Platform.isAndroid) {
-        if (await _requestPermission(Permission.storage)) {
-          directory = (await getExternalStorageDirectories()) as Directory;
-          String newPath = "";
-          List<String> folders = directory.path.split("/");
-          for (int x = 1; x < folders.length; x++) {
-            String folder = folders[x];
-            if (folder != "Android") {
-              newPath += "/" + folder;
-            } else {
-              break;
-            }
-          }
-          newPath = newPath + "/motivationalQuote";
-          directory = Directory(newPath);
-          print(directory.path);
-        } else {
-          return false;
-        }
-      } else {
-        if (await _requestPermission(Permission.photos)) {
-          directory = await getTemporaryDirectory();
-        } else {
-          return false;
-        }
-      }
-      if (!await directory.exists()) {
-        await directory.create(recursive: true);
-      }
-      if (await directory.exists()) {
-        File saveFile = File(directory.path + "/$fileName");
-        await dio.download(text, saveFile.path,
-            onReceiveProgress: (downloaded, totalSize) {
-          setState(() {
-            progrss = downloaded / totalSize;
-          });
-        });
-        if (Platform.isIOS) {
-          await ImageGallerySaver.saveFile(saveFile.path,
-              isReturnPathOfIOS: true);
-        }
-        return true;
-      }
-    } catch (e) {
-      print(e);
-    }
-    return false;
-  }
-
-  Future<bool> _requestPermission(Permission permission) async {
-    if (await permission.isGranted) {
-      return true;
-    } else {
-      var result = await permission.request();
-      if (result == PermissionStatus.granted) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-  }
-
-  downloadFile() async {
-    setState(() {
-      loading = true;
-    });
-
-    bool downloaded = await saveFile($text, "text.txt");
-    if (downloaded) {
-      "File Downloaded";
-      print("File success");
-    } else
-      "Problem Downloading File";
-
-    setState(() {
-      loading = false;
-    });
-  }
+  ScreenshotController screenshotController = ScreenshotController();
 
   void _toggleFavorite() {
     setState(() {
@@ -158,7 +76,7 @@ class _QuotesScreenState extends State<QuotesScreen> {
                 color: Color(0xE4E5EA),
                 image: DecorationImage(
                   image: NetworkImage(quotesController.backImage.value),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.none,
                 ),
               ),
               child: Stack(
@@ -398,7 +316,15 @@ class _QuotesScreenState extends State<QuotesScreen> {
                       children: [
                         IconButton(
                           onPressed: () {
-                            Clipboard.setData(ClipboardData(text: $text));
+                            Clipboard.setData(new ClipboardData(text: $text))
+                                .then((_) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      behavior: SnackBarBehavior.floating,
+                                      margin: EdgeInsets.only(bottom: 200.0),
+                                      content:
+                                          Text('Copied to your clipboard !')));
+                            });
                           },
                           icon: Icon(
                             Icons.copy_rounded,
@@ -432,7 +358,7 @@ class _QuotesScreenState extends State<QuotesScreen> {
                       children: [
                         IconButton(
                           onPressed: () {
-                            downloadFile();
+                            _takeScreenShot(1);
                           },
                           icon: Icon(
                             Icons.image,
@@ -449,7 +375,9 @@ class _QuotesScreenState extends State<QuotesScreen> {
                     Column(
                       children: [
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            _takeScreenShot(2);
+                          },
                           icon: Icon(
                             Icons.wallpaper_rounded,
                             size: 35,
@@ -489,6 +417,99 @@ class _QuotesScreenState extends State<QuotesScreen> {
     if (await canLaunch(url)) {
       await launch(url);
     }
+  }
+
+  saveImage(Uint8List bytes, int task) async {
+    await [Permission.storage].request();
+
+    // result['filePath'].toString().contains("file://")
+    //     ? result['filePath'].toString().replaceAll(RegExp('file://'), '')
+    //     : result['filePath'].toString().replaceAll(RegExp('content://'), '');
+
+    if (task == 2) {
+      final directory = await getApplicationDocumentsDirectory();
+      final imagePath = await File('${directory.path}/image.png').create();
+      await imagePath.writeAsBytes(bytes);
+
+      int location = WallpaperManagerFlutter.BOTH_SCREENS; //Choose screen type
+
+      WallpaperManagerFlutter().setwallpaperfromFile(
+          imagePath, location); // Wrap with try catch for error management.
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(bottom: 200.0),
+          content: Text('Wallpaper Saved Successfully')));
+
+      Navigator.pop(context);
+    } else {
+      final result = await ImageGallerySaver.saveImage(bytes,
+          name: 'Motivation' + new Random().nextInt(100000).toString());
+
+      final path = result['filePath'];
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(bottom: 200.0),
+          content: Text('Image Saved Successfully')));
+
+      Navigator.pop(context);
+
+      return path;
+    }
+  }
+
+  void _takeScreenShot(int task) async {
+    final img = await screenshotController.captureFromWidget(Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          color: Color(0xE4E5EA),
+          image: DecorationImage(
+            image: NetworkImage(quotesController.backImage.value),
+            fit: BoxFit.none,
+          ),
+        ),
+        child: Stack(alignment: Alignment.bottomCenter, children: [
+          Obx(
+            () {
+              if (quotesController.quotes.isEmpty) {
+                return Center(
+                  child: Text(
+                    $text = "No Quotes in this Category",
+                    style: TextStyle(
+                      fontFamily: 'Cinzel',
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              }
+              return PageView.builder(
+                  itemCount: quotesController.quotes.length,
+                  scrollDirection: Axis.vertical,
+                  controller: quotesController.pageControll,
+                  physics: BouncingScrollPhysics(),
+                  onPageChanged: quotesController.selectedPagexNumber,
+                  itemBuilder: (context, index) {
+                    quotesController.currentQuoteId.value =
+                        quotesController.quotes[index].id!;
+                    quotesController.currentquotesLike.value =
+                        quotesController.quotes[index].likes!;
+                    return QuoteWidget(
+                      quotesController: quotesController,
+                      index: index,
+                      quotes: Quotes(
+                          author: quotesController.quotes[index].author == ''
+                              ? ''
+                              : quotesController.quotes[index].author,
+                          quote: quotesController.quotes[index].quote),
+                    );
+                  });
+            },
+          ),
+        ])));
+
+    await saveImage(img, task);
   }
 }
 
