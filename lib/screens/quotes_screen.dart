@@ -691,11 +691,9 @@ class _QuotesScreenState extends State<QuotesScreen> {
                                   height: 50,
                                   width: 110,
                                   icon: Icons.dashboard_outlined,
-                                  // catName: widget.catName == null
-                                  //     ? 'General'
-                                  //     // : "Syed kkklkkkkkkkkkkkkkkk",
-                                  //     : ,
-                                  catName: widget.catName!,
+                                  catName: widget.catName == null
+                                      ? 'General'
+                                      : widget.catName!,
                                   onTap: () => Get.to(CategpriesScreen())),
                             ],
                           ),
