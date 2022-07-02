@@ -54,6 +54,7 @@ class QuoteWidget extends StatelessWidget {
       //   );
       // },
       child: Container(
+        color: Colors.black,
         padding: EdgeInsets.only(left: 22, right: 22, top: 60),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -64,6 +65,7 @@ class QuoteWidget extends StatelessWidget {
               maxFontSize: 30,
               minFontSize: 25,
               style: TextStyle(
+                color: Colors.white,
                 fontFamily: quotesController.fontFam.value,
                 fontWeight: FontWeight.w700,
               ),
@@ -78,7 +80,7 @@ class QuoteWidget extends StatelessWidget {
                       '-Anonymous',
                       style: GoogleFonts.cinzel(
                         textStyle: TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.w400,
                           fontSize: 16,
                         ),
@@ -88,41 +90,41 @@ class QuoteWidget extends StatelessWidget {
                       '- ${quotes.author!}',
                       style: GoogleFonts.raleway(
                         textStyle: TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.w800,
                           fontSize: 16,
                         ),
                       ),
                     ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    quotesController
-                        .likeQuote(quotesController.currentQuoteId.value);
-                  },
-                  icon: quotesController.currentquotesLike
-                          .contains(Get.find<AuthController>().user!.uid)
-                      ? Icon(Icons.favorite)
-                      : Icon(Icons.favorite_border),
-                  color: quotesController.currentquotesLike
-                          .contains(Get.find<AuthController>().user!.uid)
-                      ? Colors.red
-                      : Colors.white,
-                  iconSize: 35,
-                ),
-                IconButton(
-                  onPressed: () {
-                    Share.share(quotes.quote!, subject: 'Read This Quote');
-                  },
-                  icon: Icon(Icons.share),
-                  color: Colors.white,
-                  iconSize: 35,
-                ),
-              ],
-            ),
+            // Row(
+            // mainAxisAlignment: MainAxisAlignment.center,
+            // children: [
+            // IconButton(
+            //   onPressed: () {
+            //     quotesController
+            //         .likeQuote(quotesController.currentQuoteId.value);
+            //   },
+            //   icon: quotesController.currentquotesLike
+            //           .contains(Get.find<AuthController>().user!.uid)
+            //       ? Icon(Icons.favorite)
+            //       : Icon(Icons.favorite_border),
+            //   color: quotesController.currentquotesLike
+            //           .contains(Get.find<AuthController>().user!.uid)
+            //       ? Colors.red
+            //       : Colors.white,
+            //   iconSize: 35,
+            // ),
+            // IconButton(
+            //   onPressed: () {
+            //     Share.share(quotes.quote!, subject: 'Read This Quote');
+            //   },
+            //   icon: Icon(Icons.share),
+            //   color: Colors.white,
+            //   iconSize: 35,
+            // ),
+            // ],
+            // ),
           ],
         ),
       ),

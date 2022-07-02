@@ -1,3 +1,37 @@
+// import 'package:cloud_firestore/cloud_firestore.dart';
+
+// class Quotes {
+//   String? id;
+//   String? quote;
+//   String? author;
+//   String? category;
+//   List? likes;
+
+//   Quotes({
+//     this.id,
+//     this.quote,
+//     this.author,
+//     this.category,
+//     this.likes,
+//   });
+
+//   Quotes.fromDocumentSnapshot({required DocumentSnapshot documentSnapshot}) {
+//     id = documentSnapshot.id;
+//     quote = documentSnapshot["quote"];
+//     author = documentSnapshot["author"];
+//     category = documentSnapshot["category"];
+//     likes = documentSnapshot['likes'] ?? [];
+//   }
+
+//   Map<String, dynamic> toMap() {
+//     return {
+//       "quote": quote,
+//       "author": author,
+//       "category": category,
+//       'likes': likes
+//     };
+//   }
+// }
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Quotes {
@@ -17,10 +51,6 @@ class Quotes {
 
   Quotes.fromDocumentSnapshot({required DocumentSnapshot documentSnapshot}) {
     id = documentSnapshot.id;
-    quote = documentSnapshot["quote"];
-    category = documentSnapshot["category"];
-    author = documentSnapshot["author"];
-    likes = documentSnapshot['likes'] ?? [];
   }
 
   Map<String, dynamic> toMap() {
@@ -28,7 +58,7 @@ class Quotes {
       "quote": quote,
       "category": category,
       "author": author,
-      'likes': likes
+      // 'likes': likes
     };
   }
 }

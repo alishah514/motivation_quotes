@@ -20,6 +20,8 @@ class IconButtonText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var myGroup = AutoSizeGroup();
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -42,6 +44,7 @@ class IconButtonText extends StatelessWidget {
                 Expanded(
                   child: AutoSizeText(
                     catName,
+                    group: myGroup,
                     overflow: TextOverflow.visible,
                     maxLines: 1,
                     style: GoogleFonts.raleway(

@@ -57,8 +57,8 @@ class CategoryCard extends StatelessWidget {
                               child: InkWell(
                                   onTap: () {
                                     Get.to(QuotesScreen(
-                                      catId: _catModel.catId,
-                                      catName: _catModel.catName,
+                                      catId: _catModel.catId!,
+                                      catName: _catModel.catName!,
                                     ));
                                   },
                                   child: Container(
